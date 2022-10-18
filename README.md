@@ -7,3 +7,4 @@ This is a new feature 2 for release 0.3.0
 Another feature.
 Fast forward action enabled.
 Super feature make fast-forward work ewwith release drafter.
+This change should never be there.
