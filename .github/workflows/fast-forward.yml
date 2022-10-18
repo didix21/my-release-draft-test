@@ -1,21 +1,39 @@
-on: 
-  issue_comment:
-    types: [created]
-
+on:
+   issue_comment:
+     types: [created]
 jobs:
-  fast_forward_job:
-    name: Fast Forward
-    if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '/fast-forward')   
-    runs-on: ubuntu-latest
-    steps:
-      # To use this repository's private action, you must check out the repository
-      - name: Checkout
-        uses: actions/checkout@v2
-      # Basic use case example
-      - name: Fast Forward PR
-        id: ff-action
-        uses:  ./
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          success_message: 'Success! Fast forwarded ***target_base*** to ***source_head***! ```git checkout target_base && git merge source_head --ff-only``` '
-          failure_message: 'Failed! Cannot do fast forward!'
+   fast_forward_job:
+     name: Fast Forward
+     if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '/fast-forward')
+     runs-on: ubuntu-latest
+     steps:
+       - uses: xt0rted/pull-request-comment-branch@v1
+         id: comment-branch
+       # To use this repository's private action, you must check out the repository
+       - name: Checkout
+         uses: actions/checkout@v2
+       - name: Extract branch name
+         shell: bash
+         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+         id: current_branch
+       - name: Extract base branch
+         shell: bash
+         run: |
+           comment=`echo "${{github.event.comment.body}}" |  cut -d ' ' -f 1`
+           if [  "$comment" != "/fast-forward" ]
+           then
+             echo "##[set-output name=branch;]$(echo $comment)"
+           else
+             echo "##[set-output name=branch;]$(echo "develop")"
+           fi
+         id: base_branch
+       # Basic use case example
+       - name: Fast Forward PR
+         id: ff-action
+         uses: endre-spotlab/fast-forward-js-action@2.1
+         with:
+           production_branch: ${{ steps.base_branch.outputs.branch }}
+           staging_branch: ${{ steps.comment-branch.outputs.head_ref }}
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+           success_message: 'Success! Fast forwarded ***target_base*** to ***source_head***! ```git checkout target_base && git merge source_head --ff-only``` '
+           failure_message: 'Failed! ${{ steps.comment-branch.outputs.head_ref }} to ${{ steps.base_branch.outputs.branch }} Cannot do fast forward!'
