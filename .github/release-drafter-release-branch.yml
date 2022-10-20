@@ -1,5 +1,7 @@
 name-template: '$RESOLVED_VERSION 🌈'
 tag-template: '$RESOLVED_VERSION'
+filter-by-commitish: true
+commitish: release/5.9
 categories:
   - title: '🚀 Features'
     labels:
