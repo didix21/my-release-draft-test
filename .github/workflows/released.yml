@@ -1,11 +1,11 @@
-name: Pre-release published
+name: Release published
 
 on:
   release:
     types: [released]
 
 jobs:
-  on_publish_prerelease:
+  on_publish_release:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "This should only work when publishing a pre-release"
+      - run: echo "This should only work when publishing a release"
