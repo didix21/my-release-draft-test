@@ -1,7 +1,5 @@
 name-template: '$NEXT_PATCH_VERSION🌈'
 tag-template: '$NEXT_PATCH_VERSION'
-filter-by-commitish: true
-commitish: release/5.9
 categories:
   - title: '🚀 Features'
     labels:
