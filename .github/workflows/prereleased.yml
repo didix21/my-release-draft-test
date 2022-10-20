@@ -3,3 +3,9 @@ name: Pre-release published
 on:
   release:
     types: [prereleased]
+
+jobs:
+  on_publish_prerelease:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "This should only work when publishing a pre-release"
