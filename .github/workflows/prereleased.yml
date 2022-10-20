@@ -1,0 +1,5 @@
+name: Pre-release published
+
+on:
+  release:
+    types: [prereleased]
