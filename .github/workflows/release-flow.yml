@@ -7,6 +7,7 @@ jobs:
     #if: $GITHUB_REF_NAME == 'main'
     name: New release
     runs-on: ubuntu-latest
+    environment: CircleCI
     steps:
       - uses: actions/checkout@v2
       - run: echo $GITHUB_REF_NAME
@@ -29,17 +30,29 @@ jobs:
           echo "prerelease: ${{ steps.last_release.outputs.prerelease }}"
       - name: 'Parse and stora last draft version'
         run: |
-          full_version=$(echo ${{ steps.last_release.outputs.tag_name }})
-          semver_version=$(echo ${full_version:1})
+          full_version=$(echo ${{ steps.last_release.outputs.tag_name }})           # Example v182.1.0
+          semver_version=$(echo ${full_version:1})                                  # Example 182.1.0
           echo ${semver_version}
-          major_minor_version=$(echo ${semver_version%.*})
+          major_minor_version=$(echo ${semver_version%.*})                          # Example 182.1
           echo $major_minor_version
           echo "FULL_VERSION=$full_version" >> $GITHUB_ENV
           echo "SEMVER_VERSION=$semver_version" >> $GITHUB_ENV
-          echo "MAJOR_MINOR_VERSION=$semver_version" >> $GITHUB_ENV
-      - name: 'Create a new branch'
+          echo "MAJOR_MINOR_VERSION=$major_minor_version" >> $GITHUB_ENV
+      - name: 'Create new relase branch: release/${{ env.MAJOR_MINOR_VERSION }}'
         run: |
+          # TODO: Remove echo and uncomment
           echo 'New major and minor version: ${{ env.MAJOR_MINOR_VERSION }}'
+          release_branch=$(echo 'release/${{ env.MAJOR_MINOR_VERSION }}')
+          # git checkout -b $release_branch
+          # git push --set-upstream origin $release_branch
+      - name: 'Notify CircleCI to make builds'
+        id: abcdef
+        uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0.5
+        with:
+          GHA_Meta: "${{ env.SEMVER_VERSION }}"
+        env:
+          CCI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
+
 
           
 

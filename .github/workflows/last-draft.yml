@@ -5,6 +5,7 @@ jobs:
   build:
     name: RedisTimeSeries
     runs-on: ubuntu-latest
+    environment: CircleCI
     steps:
       - uses: actions/checkout@v1
       - name: "call action"
