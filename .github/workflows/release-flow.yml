@@ -9,14 +9,17 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - run: echo $GITHUB_REF_NAME
-      - name: 'Get last draft version'
         # TODO: How to handle if a patch has replaced the last minor?
         id: last_draft_release
+      - uses: actions/checkout@v1
+      - name: "Get last release"
+        id: last_release
         uses: InsonusK/get-latest-release@v1.0.1
         with:
           myToken: ${{ github.token }}
           exclude_types: "release"
           view_top: 1
+
       - name: "Print result"
         run: |
           echo "id: ${{ steps.last_release.outputs.id }}"
