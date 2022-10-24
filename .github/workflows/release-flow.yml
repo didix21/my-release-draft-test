@@ -30,7 +30,10 @@ jobs:
           echo "prerelease: ${{ steps.last_release.outputs.prerelease }}"
       - name: 'Create a new branch'
         run: |
-          FULL_VERSION=$(echo ${{ steps.last_release.outputs.draft }})
-          echo $FULL_VERSION
-          echo ${FULL_VERSION:1}
+          FULL_VERSION=$(echo ${{ steps.last_release.outputs.tag_name }})
+          SEMVER_VERSION=$(echo ${FULL_VERSION:1})
+          echo ${SEMVER_VERSION}
+          MAJOR_MINOR_VERSION=$(echo ${SEMVER_VERSION%.*})
+          echo $MAJOR_MINOR_VERSION
+          
 
