@@ -18,3 +18,4 @@ New feature 20
 New feature 21
 New feature 22
 New feature 23
+Bugfix sovled
