@@ -25,6 +25,7 @@ jobs:
       - image: cimg/base:stable
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    when: << pipeline.parameters.GHA_Action >>
     steps:
       - checkout
       - run:
