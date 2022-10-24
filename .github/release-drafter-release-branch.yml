@@ -17,6 +17,8 @@ categories:
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 prerelease: true
+filter-by-commitish: true
+commitish: release/5.11
 version-resolver:
   major:
     labels:
