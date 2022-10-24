@@ -1,0 +1,23 @@
+name: Release Flow
+on: [workflow_dispatch]
+
+jobs:
+  new-release:
+    if: ${GITHUB_REF##*/} == 'main'
+    name: New release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: 'Get last draft version'
+        # TODO: How to handle if a patch has replaced the last minor?
+        id: last_draft_release
+        uses: InsonusK/get-latest-release@v1.0.1
+        with:
+          myToken: ${{ secret.GITHUB_TOKEN }}
+          exclude_types: "release"
+          view_top: 2
+      - name: 'Create a new branch'
+        run: |
+          FULL_VERSION=$(echo ${"${{ steps.last_release.outputs.draft }}":1})
+          echo $FULL_VERSION
+
