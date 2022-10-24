@@ -3,11 +3,11 @@ on: [push, workflow_dispatch]
 
 jobs:
   new-release:
-    #if: $GITHUB_REF_NAME == 'main'
+    if: $GITHUB_REF_NAME == 'main'
     name: New release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - run: echo $GITHUB_REF_NAME
         # TODO: How to handle if a patch has replaced the last minor?
         id: last_draft_release
