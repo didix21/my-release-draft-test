@@ -1,5 +1,5 @@
 name: Release Flow
-on: [workflow_dispatch]
+on: [push, workflow_dispatch]
 
 jobs:
   new-release:
@@ -19,6 +19,7 @@ jobs:
           view_top: 1
       - name: 'Create a new branch'
         run: |
-          FULL_VERSION=$(echo ${"${{ steps.last_release.outputs.draft }}":1})
+          FULL_VERSION=$(echo ${{ steps.last_release.outputs.draft }})
           echo $FULL_VERSION
+          echo ${FULL_VERSION:1}
 
