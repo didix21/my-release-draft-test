@@ -13,7 +13,7 @@ jobs:
         id: last_draft_release
         uses: InsonusK/get-latest-release@v1.0.1
         with:
-          myToken: ${{ secret.GITHUB_TOKEN }}
+          myToken: ${{ secrets.GITHUB_TOKEN }}
           exclude_types: "release"
           view_top: 2
       - name: 'Create a new branch'
