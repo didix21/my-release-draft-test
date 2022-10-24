@@ -14,9 +14,9 @@ jobs:
         id: last_draft_release
         uses: InsonusK/get-latest-release@v1.0.1
         with:
-          myToken: ${{ secrets.GITHUB_TOKEN }}
+          myToken: ${{ github.token }}
           exclude_types: "release"
-          view_top: 2
+          view_top: 1
       - name: 'Create a new branch'
         run: |
           FULL_VERSION=$(echo ${"${{ steps.last_release.outputs.draft }}":1})
