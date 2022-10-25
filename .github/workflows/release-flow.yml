@@ -58,11 +58,11 @@ jobs:
           replaceVersion "PATCH_VERSION" "0"
 
           echo "The current App.xcconfig is: $(cat configs/App.xcconfig)"
-      - name: 'Bump version to ${{ env.FUll_VERSION }}'
+      - name: 'Bump version to ${{ env.SEMVER_VERSION }}'
         run: |
           git config --local user.email "didaccoll_93@hotmail.com"
           git config --local user.name "github-actions[bot]"
-          git commit -m "Bump version to ${{ env.FUll_VERSION }}" -a
+          git commit -m "Bump version to ${{ env.SEMVER_VERSION }}" -a
       - name: Push changes
         uses: ad-m/github-push-action@v0.6.0
         with:
