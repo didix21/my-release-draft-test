@@ -25,9 +25,9 @@ jobs:
       - image: cimg/base:stable
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
-    # when: 
-    #   condition:
-    #       equal: [ true, << pipeline.parameters.GHA_Action >> ]
+    when: 
+      condition:
+          equal: [ 'workflow_dispatch', << pipeline.parameters.GHA_Action >> ]
     steps:
       - checkout
       - run:
