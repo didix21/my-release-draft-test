@@ -14,7 +14,7 @@ jobs:
         id: last_release
         uses: InsonusK/get-latest-release@v1.0.1
         with:
-          myToken: ${{ github.token }}
+          myToken: ${{ secrets.GITHUB_TOKEN }}
           exclude_types: "release"
           view_top: 1
       - name: 'Parse and store last draft version'
@@ -68,6 +68,12 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
+  
+  # new-hotfix:
+  #   if: ${{ github.ref_name == 'release/**' }}
+  #   name: New release
+  #   runs-on: ubuntu-latest
+  #   environment: CircleCI
 
 
 
