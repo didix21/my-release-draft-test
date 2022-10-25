@@ -78,7 +78,7 @@ jobs:
   
   new-hotfix:
     if: ${{ contains(github.ref_name, 'release/') }}
-    name: New release
+    name: Hot Fix
     runs-on: ubuntu-latest
     environment: CircleCI
     steps:
