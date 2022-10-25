@@ -4,7 +4,7 @@ on: [push, workflow_dispatch]
 jobs:
   new-release:
     #TODO: Only run for main seems this doesnt like to github
-    #if: $GITHUB_REF_NAME == 'main'
+    if: ${{ github.ref_name == 'main' }}
     name: New release
     runs-on: ubuntu-latest
     environment: CircleCI
@@ -19,16 +19,7 @@ jobs:
           myToken: ${{ github.token }}
           exclude_types: "release"
           view_top: 1
-
-      - name: "Print result"
-        run: |
-          echo "id: ${{ steps.last_release.outputs.id }}"
-          echo "name: ${{ steps.last_release.outputs.name }}"
-          echo "tag_name: ${{ steps.last_release.outputs.tag_name }}"
-          echo "created_at: ${{ steps.last_release.outputs.created_atd }}"
-          echo "draft: ${{ steps.last_release.outputs.draft }}"
-          echo "prerelease: ${{ steps.last_release.outputs.prerelease }}"
-      - name: 'Parse and stora last draft version'
+      - name: 'Parse and store last draft version'
         run: |
           full_version=$(echo ${{ steps.last_release.outputs.tag_name }})           # Example v182.1.0
           semver_version=$(echo ${full_version:1})                                  # Example 182.1.0
@@ -43,7 +34,7 @@ jobs:
           # TODO: Remove echo and uncomment
           echo 'New major and minor version: ${{ env.MAJOR_MINOR_VERSION }}'
           release_branch=$(echo 'release/${{ env.MAJOR_MINOR_VERSION }}')
-          # git checkout -b $release_branch
+          # git branch $release_branch
           # git push --set-upstream origin $release_branch
       - name: 'Notify CircleCI to make builds'
         id: abcdef
@@ -52,6 +43,8 @@ jobs:
           GHA_Meta: "${{ env.SEMVER_VERSION }}"
         env:
           CCI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
+       #- name: 'Update App.xcconfig file'
+
 
 
           
