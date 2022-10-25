@@ -25,7 +25,9 @@ jobs:
       - image: cimg/base:stable
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
-    when: << pipeline.parameters.GHA_Action >>
+    # when: 
+    #   condition:
+    #       equal: [ true, << pipeline.parameters.GHA_Action >> ]
     steps:
       - checkout
       - run:
@@ -34,7 +36,8 @@ jobs:
       - run:
           name: "Check metadata"
           command: |
-            echo << pipeline.parameters.GHA_Event >>
+            echo "Action: << pipeline.parameters.GHA_Action >> "
+            echo "Event: << pipeline.parameters.GHA_Event >> "
             echo "Version: << pipeline.parameters.GHA_Meta >> "
       - run:
           name: "Check commit"
