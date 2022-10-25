@@ -86,6 +86,7 @@ jobs:
       - name: 'Extract version from branch ${{ github.ref_name }}'
         run: |
           branch_version=$(echo "$(echo "${{ github.ref_name }}" | grep -E -o "(\d+).(\d+)")")
+          echo "Branch version is: $branch_version"
           echo "BRANCH_VERSION=$branch_version" >> $GITHUB_ENV
       - name: "Get latest patch from branch version ${{ env.BRANCH_VERSION }}"
         uses: cardinalby/git-get-release-action@v1
