@@ -9,78 +9,67 @@ jobs:
     environment: CircleCI
     steps:
       - uses: actions/checkout@v2
-        # TODO: How to handle if a patch has replaced the last minor?
-      - name: "Get last release"
-        id: last_release
-        uses: InsonusK/get-latest-release@v1.0.1
-        with:
-          myToken: ${{ secrets.GITHUB_TOKEN }}
-          exclude_types: "release"
-          view_top: 1
       - name: "Get latest patch"
         uses: cardinalby/git-get-release-action@v1
-        id: byTag
+        id: latest_draft
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          #releaseNameRegEx: '5.11'
           latest: true
           draft: true
-      - name: 'Get last patch' 
+      - name: 'Parse and store last draft version'
         run: |
-          echo "Version ${{ steps.byTag.outputs.tag_name }}"
-
-      # - name: 'Parse and store last draft version'
-      #   run: |
-      #     full_version=$(echo ${{ steps.last_release.outputs.tag_name }})           # Example v182.1.0
-      #     semver_version=$(echo ${full_version:1})                                  # Example 182.1.0
-      #     major_minor_version=$(echo ${semver_version%.*})                          # Example 182.1
-      #     major=$(echo ${major_minor_version%.*})
-      #     minor=$(echo ${major_minor_version#*.})
+          full_version=$(echo ${{ steps.latest_draft.outputs.tag_name }})           # Example v182.1.0
+          semver_version=$(echo ${full_version:1})                                  # Example 182.1.0
+          major_minor_version=$(echo ${semver_version%.*})                          # Example 182.1
+          major=$(echo ${major_minor_version%.*})
+          minor=$(echo ${major_minor_version#*.})
+          patch=$(echo ${semver_version##*.})
           
-      #     # Store semver components into github env variables
-      #     echo "FULL_VERSION=$full_version" >> $GITHUB_ENV
-      #     echo "SEMVER_VERSION=$semver_version" >> $GITHUB_ENV
-      #     echo "MAJOR_MINOR_VERSION=$major_minor_version" >> $GITHUB_ENV
-      #     echo "MAJOR_VERSION=$major" >> $GITHUB_ENV
-      #     echo "MINOR_VERSION=$minor" >> $GITHUB_ENV
-      # - name: 'Create new relase branch: release/${{ env.MAJOR_MINOR_VERSION }}'
-      #   run: |
-      #     # TODO: Remove echo and uncomment
-      #     echo 'New major and minor version: ${{ env.MAJOR_MINOR_VERSION }}'
-      #     release_branch=$(echo 'release/${{ env.MAJOR_MINOR_VERSION }}')
-      #     # git branch $release_branch
-      #     # git push --set-upstream origin $release_branch
-      # - name: 'Notify CircleCI to make builds'
-      #   id: abcdef
-      #   uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0.5
-      #   with:
-      #     GHA_Meta: "${{ env.SEMVER_VERSION }}"
-      #   env:
-      #     CCI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
-      # - name: 'Update App.xcconfig file'
-      #   run: |
-      #     function replaceVersion() {
-      #       find="$1 = .*;"
-      #       replace="$1 = $2;"
-      #       sed -i "s+${find}+${replace}+g" configs/App.xcconfig
-      #     }
+          # Store semver components into github env variables
+          echo "FULL_VERSION=$full_version" >> $GITHUB_ENV
+          echo "SEMVER_VERSION=$semver_version" >> $GITHUB_ENV
+          echo "MAJOR_MINOR_VERSION=$major_minor_version" >> $GITHUB_ENV
+          echo "MAJOR_VERSION=$major" >> $GITHUB_ENV
+          echo "MINOR_VERSION=$minor" >> $GITHUB_ENV
+          echo "PATCH_VERSION=$patch" >> $GITHUB_ENV
+      - name: 'Create new relase branch: release/${{ env.MAJOR_MINOR_VERSION }}'
+        run: |
+          # TODO: Remove echo and uncomment
+          echo 'New major and minor version: ${{ env.MAJOR_MINOR_VERSION }}'
+          release_branch=$(echo 'release/${{ env.MAJOR_MINOR_VERSION }}')
+          # git branch $release_branch
+          # git push --set-upstream origin $release_branch
+      - name: 'Notify CircleCI to make builds'
+        id: abcdef
+        uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0.5
+        with:
+          GHA_Meta: "${{ env.SEMVER_VERSION }}"
+        env:
+          CCI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
+      - name: 'Update App.xcconfig file'
+        run: |
+          function replaceVersion() {
+            find="$1 = .*;"
+            replace="$1 = $2;"
+            sed -i "s+${find}+${replace}+g" configs/App.xcconfig
+          }
           
-      #     replaceVersion "MAJOR_VERSION" "${{ env.MAJOR_VERSION }}"
-      #     replaceVersion "MINOR_VERSION" "${{ env.MINOR_VERSION }}"
-      #     replaceVersion "PATCH_VERSION" "0"
+          replaceVersion "MAJOR_VERSION" "${{ env.MAJOR_VERSION }}"
+          replaceVersion "MINOR_VERSION" "${{ env.MINOR_VERSION }}"
+          replaceVersion "PATCH_VERSION" "${{ env.PATCH_VERSION }}"
 
-      #     echo "The current App.xcconfig is: $(cat configs/App.xcconfig)"
-      # - name: 'Bump version to ${{ env.SEMVER_VERSION }}'
-      #   run: |
-      #     git config --local user.email "didaccoll_93@hotmail.com"
-      #     git config --local user.name "github-actions[bot]"
-      #     git commit -m "Bump version to ${{ env.SEMVER_VERSION }}" -a
-      # - name: Push changes
-      #   uses: ad-m/github-push-action@v0.6.0
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     branch: ${{ github.ref }}
+          echo "The current App.xcconfig is: $(cat configs/App.xcconfig)"
+      - name: 'Bump version to ${{ env.SEMVER_VERSION }}'
+        run: |
+          git config --local user.email "didaccoll_93@hotmail.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Bump version to ${{ env.SEMVER_VERSION }}" -a
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
   
   new-hotfix:
     if: ${{ github.ref_name == 'release/**' }}
@@ -89,21 +78,27 @@ jobs:
     environment: CircleCI
     steps:
       - uses: actions/checkout@v2
-        # TODO: How to handle if a patch has replaced the last minor?
-      - name: "Get last release"
-        id: last_release
-        uses: InsonusK/get-latest-release@v1.0.1
+      - name: 'Extract version from branch ${{ github.ref_name }}'
+        run: |
+          branch_version=$(echo "$(echo "${{ github.ref_name }}" | grep -E -o "(\d+).(\d+)")")
+          echo "BRANCH_VERSION=$branch_version" >> $GITHUB_ENV
+      - name: "Get latest patch from branch version ${{ env.BRANCH_VERSION }}"
+        uses: cardinalby/git-get-release-action@v1
+        id: latest_draft
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
-          myToken: ${{ secrets.GITHUB_TOKEN }}
-          exclude_types: "release"
-          view_top: 1
+          releaseNameRegEx: 'v${{ env.BRANCH_VERSION }}'
+          latest: true
+          draft: true
       - name: 'Parse and store last draft version'
         run: |
-          full_version=$(echo ${{ steps.last_release.outputs.tag_name }})           # Example v182.1.0
+          full_version=$(echo ${{ steps.latest_draft.outputs.tag_name }})           # Example v182.1.0
           semver_version=$(echo ${full_version:1})                                  # Example 182.1.0
           major_minor_version=$(echo ${semver_version%.*})                          # Example 182.1
           major=$(echo ${major_minor_version%.*})
           minor=$(echo ${major_minor_version#*.})
+          patch=$(echo ${semver_version##*.})
           
           # Store semver components into github env variables
           echo "FULL_VERSION=$full_version" >> $GITHUB_ENV
@@ -111,6 +106,37 @@ jobs:
           echo "MAJOR_MINOR_VERSION=$major_minor_version" >> $GITHUB_ENV
           echo "MAJOR_VERSION=$major" >> $GITHUB_ENV
           echo "MINOR_VERSION=$minor" >> $GITHUB_ENV
+          echo "PATCH_VERSION=$patch" >> $GITHUB_ENV
+      - name: 'Update App.xcconfig file'
+        run: |
+          function replaceVersion() {
+            find="$1 = .*;"
+            replace="$1 = $2;"
+            sed -i "s+${find}+${replace}+g" configs/App.xcconfig
+          }
+          
+          replaceVersion "MAJOR_VERSION" "${{ env.MAJOR_VERSION }}"
+          replaceVersion "MINOR_VERSION" "${{ env.MINOR_VERSION }}"
+          replaceVersion "PATCH_VERSION" "${{ env.PATCH_VERSION }}"
+
+          echo "The current App.xcconfig is: $(cat configs/App.xcconfig)"
+      - name: 'Bump version to ${{ env.SEMVER_VERSION }}'
+        run: |
+          git config --local user.email "didaccoll_93@hotmail.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Bump version to ${{ env.SEMVER_VERSION }}" -a
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+      - name: 'Notify CircleCI to make builds'
+        id: abcdef
+        uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0.5
+        with:
+          GHA_Meta: "${{ env.SEMVER_VERSION }}"
+        env:
+          CCI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
 
 
 
