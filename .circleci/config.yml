@@ -36,6 +36,10 @@ jobs:
           command: |
             echo << pipeline.parameters.GHA_Event >>
             echo "Version: << pipeline.parameters.GHA_Meta >> "
+      - run:
+          name: "Check commit"
+          command: |
+            git rev-parse --short HEAD
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
