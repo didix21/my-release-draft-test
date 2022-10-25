@@ -3,14 +3,12 @@ on: [push, workflow_dispatch]
 
 jobs:
   new-release:
-    #TODO: Only run for main seems this doesnt like to github
     if: ${{ github.ref_name == 'main' }}
     name: New release
     runs-on: ubuntu-latest
     environment: CircleCI
     steps:
       - uses: actions/checkout@v2
-      - run: echo $GITHUB_REF_NAME
         # TODO: How to handle if a patch has replaced the last minor?
       - name: "Get last release"
         id: last_release
@@ -23,12 +21,16 @@ jobs:
         run: |
           full_version=$(echo ${{ steps.last_release.outputs.tag_name }})           # Example v182.1.0
           semver_version=$(echo ${full_version:1})                                  # Example 182.1.0
-          echo ${semver_version}
           major_minor_version=$(echo ${semver_version%.*})                          # Example 182.1
-          echo $major_minor_version
+          major=$(echo ${major_minor_version%.*})
+          minor=$(echo ${major_minor_version#*.})
+          
+          # Store semver components into github env variables
           echo "FULL_VERSION=$full_version" >> $GITHUB_ENV
           echo "SEMVER_VERSION=$semver_version" >> $GITHUB_ENV
           echo "MAJOR_MINOR_VERSION=$major_minor_version" >> $GITHUB_ENV
+          echo "MAJOR_VERSION=$major" >> $GITHUB_ENV
+          echo "MINOR_VERSION=$minor" >> $GITHUB_ENV
       - name: 'Create new relase branch: release/${{ env.MAJOR_MINOR_VERSION }}'
         run: |
           # TODO: Remove echo and uncomment
@@ -43,7 +45,30 @@ jobs:
           GHA_Meta: "${{ env.SEMVER_VERSION }}"
         env:
           CCI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
-       #- name: 'Update App.xcconfig file'
+      - name: 'Update App.xcconfig file'
+        run: |
+          function replaceVersion() {
+            find="$1 = .*;"
+            replace="$1 = $2;"
+            sed -i "s+${find}+${replace}+g" configs/App.xcconfig
+          }
+          
+          replaceVersion "MAJOR_VERSION" "${{ env.MAJOR_VERSION }}"
+          replaceVersion "MINOR_VERSION" "${{ env.MINOR_VERSION }}"
+          replaceVersion "PATCH_VERSION" "0"
+
+          echo "The current App.xcconfig is: $(cat configs/App.xcconfig)"
+      - name: 'Bump version to ${{ env.FUll_VERSION }}'
+        run: |
+          git config --local user.email "didaccoll_93@hotmail.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Bump version to ${{ env.FUll_VERSION }}" -a
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+
 
 
 
