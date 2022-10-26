@@ -1,0 +1,32 @@
+name: "Update version on App.xcconfig"
+description: Update version on configs/Appxcconfig file
+inputs:
+  semver_version: 
+    description: Provide a valid semver version, for example 1.0.0
+    required: true
+
+runs: 
+  using: "composite" # This is mandatory if we want to share the action between workflows.
+  steps:
+    - name: 'Parse provided Semver version: ${{ inputs.semver_version }}'
+      shell: bash
+      run: |
+        echo "SEMVER_VERSION=${{ inputs.semver_version }}" >> $GITHUB_ENV
+        echo "MAJOR_VERSION=$major" >> $GITHUB_ENV
+        echo "MINOR_VERSION=$minor" >> $GITHUB_ENV
+        echo "PATCH_VERSION=$patch" >> $GITHUB_ENV
+    - name: 'Replace version on App.xcconfig file'
+      shell: bash
+      run: |
+        function replaceVersion() {
+          find="$1 = .*;"
+          replace="$1 = $2;"
+          sed -i "s+${find}+${replace}+g" configs/App.xcconfig
+        }
+        
+        replaceVersion "MAJOR_VERSION" "${{ env.MAJOR_VERSION }}"
+        replaceVersion "MINOR_VERSION" "${{ env.MINOR_VERSION }}"
+        replaceVersion "PATCH_VERSION" "${{ env.PATCH_VERSION }}"
+
+        echo "The current App.xcconfig is: $(cat configs/App.xcconfig)"
+        
