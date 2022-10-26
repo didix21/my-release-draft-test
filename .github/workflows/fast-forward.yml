@@ -4,6 +4,7 @@ on:
 jobs:
    fast_forward_job:
      name: Fast Forward
+     environment: GitHub
      if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '/fast-forward')
      runs-on: ubuntu-latest
      steps:
@@ -34,6 +35,6 @@ jobs:
          with:
            production_branch: ${{ steps.base_branch.outputs.branch }}
            staging_branch: ${{ steps.comment-branch.outputs.head_ref }}
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+           GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
            success_message: 'Success! Fast forwarded ***target_base*** to ***source_head***! ```git checkout target_base && git merge source_head --ff-only``` '
            failure_message: 'Failed! ${{ steps.comment-branch.outputs.head_ref }} to ${{ steps.base_branch.outputs.branch }} Cannot do fast forward!'
