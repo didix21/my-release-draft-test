@@ -11,7 +11,7 @@ on:
     types: [closed]
 jobs:
   update_release_draft:
-    #if: ${{ github.event.pull_request.merged  ||  github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_name == 'main') }}
+    if: ${{ github.event.pull_request.merged  ||  github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_name == 'main') }}
     runs-on: ubuntu-latest
     steps:
       - name: 'Check github variables'
