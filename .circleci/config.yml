@@ -44,10 +44,11 @@ jobs:
           name: "Check commit"
           command: |
             git rev-parse --short HEAD
+            echo $GH_TOKEN
       - github-actions/repository_dispatch:
           repo_name: "didix21/my-release-draft-test" # Your GitHub organization name + repo name
           event_type: "release_builds_ready" # Arbitrary string that your GitHub Actions will filter on
-          github_personal_access_token: $GH_TOKEN
+          github_personal_access_token: "GH_TOKEN"
           
 
 
