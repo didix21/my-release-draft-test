@@ -15,6 +15,9 @@ parameters:
     type: string
     default: ""
 
+orbs:
+  github-actions: movermeyer/github-actions@0.0.5
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -41,7 +44,11 @@ jobs:
           name: "Check commit"
           command: |
             git rev-parse --short HEAD
-      
+      - github-actions/repository_dispatch:
+          repo_name: "didix21/my-release-draft-test" # Your GitHub organization name + repo name
+          event_type: "release_builds_ready" # Arbitrary string that your GitHub Actions will filter on
+          github_personal_access_token: $GH_TOKEN
+          
 
 
 # Invoke jobs via workflows

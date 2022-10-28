@@ -1,0 +1,10 @@
+name: 'Upload release Artifacts'
+
+on:
+  repository_dispatch:
+    types: [release_builds_ready]
+jobs:
+  update_release:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo Upload artifacts
