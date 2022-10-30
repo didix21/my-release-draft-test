@@ -16,7 +16,7 @@ parameters:
     default: ""
 
 orbs:
-  github-actions: movermeyer/github-actions@0.0.5
+  github-actions-orb: didix21/github-actions-orb@0.1.3
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
@@ -34,28 +34,28 @@ jobs:
       - run:
           name: "Say hello"
           command: "echo Hello, World!"
-      - run:
-          name: "Check metadata"
-          command: |
-            echo "Action: << pipeline.parameters.GHA_Action >> "
-            echo "Event: << pipeline.parameters.GHA_Event >> "
-            echo "Version: << pipeline.parameters.GHA_Meta >> "
+      # - run:
+      #     name: "Check metadata"
+      #     command: |
+      #       echo "Action: << pipeline.parameters.GHA_Action >> "
+      #       echo "Event: << pipeline.parameters.GHA_Event >> "
+      #       echo "Version: << pipeline.parameters.GHA_Meta >> "
       - run:
           name: "Check commit"
           command: |
             git rev-parse --short HEAD
             echo $GH_TOKEN
-      - github-actions/repository_dispatch:
+      - github-actions-orb/repository_dispatch:
           repo_name: "didix21/my-release-draft-test" # Your GitHub organization name + repo name
           event_type: "release_builds_ready" # Arbitrary string that your GitHub Actions will filter on
           github_personal_access_token: "GH_TOKEN"
-          
+          metadata: ""
 
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   release:
-    when: << pipeline.parameters.GHA_Action >>
+    # when: << pipeline.parameters.GHA_Action >>
     jobs:
       - say-hello
