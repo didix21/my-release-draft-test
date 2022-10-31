@@ -45,6 +45,16 @@ jobs:
           command: |
             git rev-parse --short HEAD
             echo $GH_TOKEN
+      - run:
+          name: "Create fake artifacts"
+          command: |
+            mkdir upload-folder
+            touch upload-folder/text_1.txt
+            touch upload-folder/text_2.txt
+            echo "Some content 1" > upload-folder/text_1.txt
+            echo "Some content 2" > upload-folder/text_2.txt
+      - store_artifacts:
+          path: upload-folder
       - github-actions-orb/repository_dispatch:
           repo_name: "didix21/my-release-draft-test" # Your GitHub organization name + repo name
           event_type: "release_builds_ready" # Arbitrary string that your GitHub Actions will filter on
