@@ -6,5 +6,15 @@ on:
 jobs:
   update_release:
     runs-on: ubuntu-latest
+    environment: CircleCI
     steps:
-      - run: echo Upload artifacts
+      - uses: actions/checkout@v2
+      - name: Download Artifacts from CircleCI
+        run: |
+           curl "${{ github.event.client_payload.build_url }}/artifacts" \
+            --header 'Circle-Token: ${{ secrets.CIRCLE_CI_TOKEN }}' \
+            --header 'Content-Type: application/json'
+            
+            echo "Check content"
+            ls
+
