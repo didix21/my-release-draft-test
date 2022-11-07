@@ -31,13 +31,6 @@ jobs:
 
     steps:
       - checkout
-      - when: # Release job flow
-          condition:
-            equal: ["workflow_dispatch", "<< pipeline.parameters.GHA_Event >>"]
-          steps:
-            - run:
-                name: 'Checkout to commit: << pipeline.parameters.GHA_Action >>'
-                command: git checkout << pipeline.parameters.GHA_Action >>
       - run:
           name: "Say hello"
           command: "echo Hello, World!"
