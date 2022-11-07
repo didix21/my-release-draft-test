@@ -1,33 +1,31 @@
-name: 'Upload release Artifacts'
+name: 'Publish Prerelease'
 
 on:
   repository_dispatch:
     types: [release_builds_ready]
+
 jobs:
   update_release:
     runs-on: ubuntu-latest
     environment: CircleCI
     steps:
       - uses: actions/checkout@v2
+      - name: Set up download path
+        run: |
+           echo "DOWNLOAD_DIR=downloaded-artifacts" >> $GITHUB_ENV
       - name: Download Artifacts from CircleCI
         run: |
           ./download-artifacts.py --circleci-token ${{ secrets.CIRCLE_CI_TOKEN }} \
              --user ${{ github.event.client_payload.username }} \
              --repo-name ${{ github.event.client_payload.reponame }} \
-             --build-number ${{ github.event.client_payload.build_num }}
-          #  curl "${{ github.event.client_payload.build_url }}/artifacts" \
-          #   --header 'Circle-Token: ${{ secrets.CIRCLE_CI_TOKEN }}' \
-          #   --header 'Content-Type: application/json'
-            
-          echo "Check content"
-          ls
+             --build-number ${{ github.event.client_payload.build_num }} \
+             --download-dir ${{ env.DOWNLOAD_DIR }}
+
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file_glob: true
-          file: ./downloaded-artifacts/*
-          tag: "v5.18.0"
+          file: ./${{ env.DOWNLOAD_DIR }}/*
+          tag: "v5.19.0"
           prerelease: true
-          overwrite: true
-
