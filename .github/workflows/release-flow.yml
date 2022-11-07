@@ -1,10 +1,5 @@
 name: Release Flow
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-      - 'release/**'
+on: [workflow_dispatch]
 
 jobs:
   new-release:
@@ -33,14 +28,13 @@ jobs:
           echo "MAJOR_MINOR_VERSION=$major_minor_version" >> $GITHUB_ENV
       - name: 'Create new relase branch: release/${{ env.MAJOR_MINOR_VERSION }}'
         run: |
-          # TODO: Remove echo and uncomment
           echo 'New major and minor version: ${{ env.MAJOR_MINOR_VERSION }}'
           release_branch=$(echo 'release/${{ env.MAJOR_MINOR_VERSION }}')
-          # git branch $release_branch
-          # git push --set-upstream origin $release_branch
-      - name: 'Notify CircleCI to make builds'
-        id: abcdef
-        uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0.5
+          git branch $release_branch
+          git push --set-upstream origin $release_branch
+      - name: 'Notify CircleCI to create builds for version "${{ env.SEMVER_VERSION }}"'
+        id: ${{ github.sha }}
+        uses: CircleCI-Public/trigger-circleci-pipeline-action@v1
         with:
           GHA_Meta: "${{ env.SEMVER_VERSION }}"
         env:

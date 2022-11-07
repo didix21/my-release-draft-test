@@ -31,15 +31,22 @@ jobs:
 
     steps:
       - checkout
+      - when: # Release job flow
+          condition:
+            equal: ["workflow_dispatch", "<< pipeline.parameters.GHA_Event >>"]
+          steps:
+            - run:
+                name: 'Checkout to commit: << pipeline.parameters.GHA_Action >>'
+                command: git checkout << pipeline.parameters.GHA_Action >>
       - run:
           name: "Say hello"
           command: "echo Hello, World!"
-      # - run:
-      #     name: "Check metadata"
-      #     command: |
-      #       echo "Action: << pipeline.parameters.GHA_Action >> "
-      #       echo "Event: << pipeline.parameters.GHA_Event >> "
-      #       echo "Version: << pipeline.parameters.GHA_Meta >> "
+      - run:
+          name: "Check metadata"
+          command: |
+            echo "Action: << pipeline.parameters.GHA_Action >> "
+            echo "Event: << pipeline.parameters.GHA_Event >> "
+            echo "Version: << pipeline.parameters.GHA_Meta >> "
       - run:
           name: "Check commit"
           command: |
@@ -59,13 +66,13 @@ jobs:
           repo_name: "didix21/my-release-draft-test" # Your GitHub organization name + repo name
           event_type: "release_builds_ready" # Arbitrary string that your GitHub Actions will filter on
           github_personal_access_token: "GH_TOKEN"
-          metadata: ""
+          metadata: '{"version": "<< pipeline.parameters.GHA_Meta >>"}'
 
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   release:
-    # when: << pipeline.parameters.GHA_Action >>
+    when: << pipeline.parameters.GHA_Action >>
     jobs:
       - say-hello

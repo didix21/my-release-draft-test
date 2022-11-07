@@ -27,5 +27,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file_glob: true
           file: ./${{ env.DOWNLOAD_DIR }}/*
-          tag: "v5.19.0"
+          tag: "v${{ fromJSON(github.event.client_payload.metadata).version }}"
           prerelease: true
