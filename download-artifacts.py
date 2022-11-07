@@ -62,10 +62,11 @@ def main():
         sys.exit(1)
 
     urls = get_artifact_urls(circle_ci_token, user, repo_name, build_number)
+    os.system(f'mkdir -p {download_dir}')
 
     for url in urls:
         print(f'Downloading: {url}')
-        os.system(f'curl --create-dirs --output-dir ./{download_dir} -LO {url}')
+        os.system(f'(cd {download_dir} && curl -LO {url})')
 
 if __name__ == '__main__':
     main()
