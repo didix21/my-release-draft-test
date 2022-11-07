@@ -32,9 +32,9 @@ jobs:
           release_branch=$(echo 'release/${{ env.MAJOR_MINOR_VERSION }}')
           git branch $release_branch
           git push --set-upstream origin $release_branch
-      - name: 'Notify CircleCI to create builds for version "${{ env.SEMVER_VERSION }}"'
-        id: ${{ github.sha }}
-        uses: CircleCI-Public/trigger-circleci-pipeline-action@v1
+      - name: 'Notify CircleCI to create builds for version "${{ env.SEMVER_VERSION }}" from commit ${{ github.sha }}'
+        id: abcdef
+        uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0.5
         with:
           GHA_Meta: "${{ env.SEMVER_VERSION }}"
         env:
