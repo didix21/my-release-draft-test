@@ -29,3 +29,4 @@ New feature 27
 ## The final one
 
 - Step 1.
+- Step 2.
