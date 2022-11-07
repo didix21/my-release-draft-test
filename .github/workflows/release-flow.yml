@@ -47,16 +47,16 @@ jobs:
         uses: './.github/actions/update-app-config'
         with:
           semver_version: ${{ env.SEMVER_VERSION }}
-      - name: 'Bump version to ${{ env.SEMVER_VERSION }}'
-        run: |
-          git config --local user.email "didaccoll_93@hotmail.com"
-          git config --local user.name "github-actions[bot]"
-          git commit -m "Bump version to ${{ env.SEMVER_VERSION }}" -a
-      - name: Push changes
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+      # - name: 'Bump version to ${{ env.SEMVER_VERSION }}'
+      #   run: |
+      #     git config --local user.email "didaccoll_93@hotmail.com"
+      #     git config --local user.name "github-actions[bot]"
+      #     git commit -m "Bump version to ${{ env.SEMVER_VERSION }}" -a
+      # - name: Push changes
+      #   uses: ad-m/github-push-action@v0.6.0
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     branch: ${{ github.ref }}
   
   new-hotfix:
     if: ${{ contains(github.ref_name, 'release/') }}

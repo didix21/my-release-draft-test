@@ -20,12 +20,20 @@ jobs:
              --repo-name ${{ github.event.client_payload.reponame }} \
              --build-number ${{ github.event.client_payload.build_num }} \
              --download-dir ${{ env.DOWNLOAD_DIR }}
-
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
+      - name: "Get latest patch from branch version ${{ env.BRANCH_VERSION }}"
+        uses: cardinalby/git-get-release-action@v1
+        id: latest_draft
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file_glob: true
+          releaseNameRegEx: "v${{ fromJSON(github.event.client_payload.metadata).version }}"
+          latest: true
+          draft: true
+      - name: Upload binaries to release
+        uses: xresloader/upload-to-github-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
           file: ./${{ env.DOWNLOAD_DIR }}/*
-          tag: "v${{ fromJSON(github.event.client_payload.metadata).version }}"
           prerelease: true
+          release_id: ${{ steps.latest_draft.outputs.id }}
