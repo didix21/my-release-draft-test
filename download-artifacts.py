@@ -24,7 +24,7 @@ def get_artifact_urls(token: str, user: str, repo_name: str, build_number: int):
 
 def main():
     try:
-        optlist, args = getopt.getopt(sys.argv[1:], '', ['circleci-token=', 'user=', 'repo-name=', 'build-number='])
+        optlist, args = getopt.getopt(sys.argv[1:], '', ['circleci-token=', 'user=', 'repo-name=', 'build-number=', 'download-dir='])
     except getopt.GetoptError as err:
         print(err)
         sys.exit(1)
@@ -45,6 +45,9 @@ def main():
             repo_name = argument
         elif option == '--build-number':
             build_number = int(argument)
+        elif option == '--download-dir':
+            if argument != "":
+                download_dir = argument
         else:
             assert False, f'Unhandled option {option}'
 
@@ -65,7 +68,7 @@ def main():
     os.system(f'mkdir -p {download_dir}')
 
     for url in urls:
-        print(f'Downloading: {url}')
+        print(f'Downloading: {url} to path {download_dir}')
         os.system(f'(cd {download_dir} && curl -LO {url})')
 
 if __name__ == '__main__':
