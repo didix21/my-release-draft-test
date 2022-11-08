@@ -12,7 +12,7 @@ runs:
       shell: bash
       run: |
         echo "SEMVER_VERSION=${{ inputs.semver_version }}" >> $GITHUB_ENV
-        major_minor_version=$(echo ${semver_version%.*})                          # Example 182.1
+        major_minor_version=$(echo ${SEMVER_VERSION%.*})                          # Example 182.1
         major=$(echo ${major_minor_version%.*})
         minor=$(echo ${major_minor_version#*.})
         patch=$(echo ${semver_version##*.})
