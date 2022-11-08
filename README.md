@@ -42,3 +42,10 @@ New feature 27
 - Step 12.
 - Step 13.
 - Step 14.
+
+
+## Hot fix
+
+### v5.32.0
+
+- Fix 1.
