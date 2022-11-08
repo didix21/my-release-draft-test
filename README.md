@@ -49,3 +49,4 @@ New feature 27
 ### v5.32.0
 
 - Fix 1.
+- Fix 2.
