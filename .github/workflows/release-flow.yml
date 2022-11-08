@@ -8,6 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: CircleCI
     steps:
+      # We want to ensure release-drafter is updated on main
+      - uses: release-drafter/release-drafter@v5
+        with:
+          config-name: release-drafter-main.yml # located in .github/ in default branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/checkout@v2
       - name: "Get latest patch"
         uses: cardinalby/git-get-release-action@v1
