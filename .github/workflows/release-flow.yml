@@ -37,7 +37,7 @@ jobs:
           echo "COMMIT_SHA=${{ github.sha }}" >> $GITHUB_ENV
           echo "Current comimt = $COMMIT_SHA"
       - name: 'Notify CircleCI to create builds for version "${{ env.SEMVER_VERSION }}" from commit ${{ github.sha }}'
-        id: r23fead50246387983ee340507115ef4 # Result of md5 -q -s "release"
+        id: release # Result of md5 -q -s "release"
         uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0.5
         with:
           GHA_Meta: "${{ env.SEMVER_VERSION }}"
@@ -101,7 +101,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
       - name: 'Notify CircleCI to make builds'
-        id: h7f9483d017649f5652ddcb8d981f4da  # Result of md5 -q -s "hotfix"
+        id: hotfix  # Result of md5 -q -s "hotfix"
         uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0.5
         with:
           GHA_Meta: "${{ env.SEMVER_VERSION }}"

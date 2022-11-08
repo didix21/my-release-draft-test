@@ -13,6 +13,7 @@ jobs:
       - name: Set up download path
         run: |
            echo "DOWNLOAD_DIR=downloaded-artifacts" >> $GITHUB_ENV
+           echo "LAST_DRAFT_TAG=v${{ fromJSON(github.event.client_payload.metadata).version }} >> $GITHUB_ENV"
       - name: Download Artifacts from CircleCI
         run: |
           ./download-artifacts.py --circleci-token ${{ secrets.CIRCLE_CI_TOKEN }} \
@@ -20,13 +21,13 @@ jobs:
              --repo-name ${{ github.event.client_payload.reponame }} \
              --build-number ${{ github.event.client_payload.build_num }} \
              --download-dir ${{ env.DOWNLOAD_DIR }}
-      - name: "Get latest patch from branch version ${{ env.BRANCH_VERSION }}"
+      - name: "Get latest patch from branch version ${{ env.LAST_DRAFT_TAG }}"
         uses: cardinalby/git-get-release-action@v1
         id: latest_draft
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          releaseNameRegEx: "v${{ fromJSON(github.event.client_payload.metadata).version }}"
+          releaseNameRegEx: "${{ env.LAST_DRAFT_TAG }}"
           latest: true
           draft: true
       - name: Upload binaries to release
@@ -36,4 +37,15 @@ jobs:
         with:
           file: ./${{ env.DOWNLOAD_DIR }}/*
           prerelease: true
-          release_id: ${{ steps.latest_draft.outputs.id }}
+          release_id: ${{ steps.latest_draft.outputs.id }}
+      - name: Publish the release ${{ env.LAST_DRAFT_TAG }}
+        run: |
+          gh api \
+          --method PATCH \
+          -H "Accept: application/vnd.github+json" /repos/$REPOSITORY/releases/$RELEASE_ID -F draft=false -F prerelease=true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          RELEASE_ID: ${{ steps.latest_draft.outputs.id }}
+
+
