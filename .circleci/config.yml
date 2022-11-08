@@ -51,6 +51,7 @@ jobs:
             mkdir upload-folder
             touch upload-folder/text_1.txt
             touch upload-folder/text_2.txt
+            echo "Current branch is: $CIRCLE_BRANCH"
             echo "Some content 1" > upload-folder/text_1.txt
             echo "Some content 2" > upload-folder/text_2.txt
       - store_artifacts:

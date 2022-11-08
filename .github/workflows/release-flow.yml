@@ -70,6 +70,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: CircleCI
     steps:
+      # We want to ensure release-drafter is updated on release/**
+      - uses: release-drafter/release-drafter@v5
+        with:
+          config-name: release-drafter-release-branch.yml # located in .github/ in default branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/checkout@v2
       - name: 'Extract version from branch ${{ github.ref_name }}'
         run: |
