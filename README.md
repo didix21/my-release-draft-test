@@ -40,3 +40,10 @@ New feature 27
 - Step 10.
 - Step 11.
 - Step 12.
+
+
+## Hotfix
+
+### v5.30.0
+
+- Fix 1.
