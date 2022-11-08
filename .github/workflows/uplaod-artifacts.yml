@@ -42,7 +42,7 @@ jobs:
         run: |
           gh api \
           --method PATCH \
-          -H "Accept: application/vnd.github+json" /repos/$REPOSITORY/releases/$RELEASE_ID -F draft=false -F prerelease=true
+          -H "Accept: application/vnd.github+json" /repos/$REPOSITORY/releases/$RELEASE_ID  -f target_commitish='main' -F draft=false -F prerelease=true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
