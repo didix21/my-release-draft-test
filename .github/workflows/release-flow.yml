@@ -19,8 +19,8 @@ jobs:
           draft: true
       - name: 'Parse and store last draft version'
         run: |
-          full_version=$(echo ${{ steps.latest_draft.outputs.tag_name }})           # Example v182.1.0
-          semver_version=$(echo ${full_version:1})                                  # Example 182.1.0
+          full_version=$(echo ${{ steps.latest_draft.outputs.tag_name }})           # Example v182.1.0
+          semver_version=$(echo ${full_version:1})                                  # Example 182.1.0
           major_minor_version=$(echo ${semver_version%.*})                          # Example 182.1
           
           # Store semver components into github env variables
@@ -37,7 +37,7 @@ jobs:
           echo "COMMIT_SHA=${{ github.sha }}" >> $GITHUB_ENV
           echo "Current comimt = $COMMIT_SHA"
       - name: 'Notify CircleCI to create builds for version "${{ env.SEMVER_VERSION }}" from commit ${{ github.sha }}'
-        id: release # Result of md5 -q -s "release"
+        id: release
         uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0.5
         with:
           GHA_Meta: "${{ env.SEMVER_VERSION }}"
@@ -81,8 +81,8 @@ jobs:
           draft: true
       - name: 'Parse and store last draft version'
         run: |
-          full_version=$(echo ${{ steps.latest_draft.outputs.tag_name }})           # Example v182.1.0
-          semver_version=$(echo ${full_version:1})                                  # Example 182.1.0
+          full_version=$(echo ${{ steps.latest_draft.outputs.tag_name }})           # Example v182.1.0
+          semver_version=$(echo ${full_version:1})                                  # Example 182.1.0
 
           # Store semver components into github env variables
           echo "SEMVER_VERSION=$semver_version" >> $GITHUB_ENV
@@ -101,7 +101,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
       - name: 'Notify CircleCI to make builds'
-        id: hotfix  # Result of md5 -q -s "hotfix"
+        id: hotfix
         uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0.5
         with:
           GHA_Meta: "${{ env.SEMVER_VERSION }}"
