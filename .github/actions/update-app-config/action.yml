@@ -15,7 +15,7 @@ runs:
         major_minor_version=$(echo ${SEMVER_VERSION%.*})                          # Example 182.1
         major=$(echo ${major_minor_version%.*})
         minor=$(echo ${major_minor_version#*.})
-        patch=$(echo ${semver_version##*.})
+        patch=$(echo ${SEMVER_VERSION##*.})
         echo "MAJOR_VERSION=$major" >> $GITHUB_ENV
         echo "MINOR_VERSION=$minor" >> $GITHUB_ENV
         echo "PATCH_VERSION=$patch" >> $GITHUB_ENV
