@@ -112,13 +112,13 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
-      - name: 'Notify CircleCI to make builds'
-        id: hotfix
-        uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0.5
-        with:
-          GHA_Meta: "${{ env.SEMVER_VERSION }}"
-        env:
-          CCI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
+      # - name: 'Notify CircleCI to make builds'
+      #   id: hotfix
+      #   uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0.5
+      #   with:
+      #     GHA_Meta: "${{ env.SEMVER_VERSION }}"
+      #   env:
+      #     CCI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
 
 
 
