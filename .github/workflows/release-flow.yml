@@ -42,13 +42,13 @@ jobs:
         run: |
           echo "COMMIT_SHA=${{ github.sha }}" >> $GITHUB_ENV
           echo "Current comimt = $COMMIT_SHA"
-      - name: 'Notify CircleCI to create builds for version "${{ env.SEMVER_VERSION }}" from commit ${{ github.sha }}'
-        id: release
-        uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0.5
-        with:
-          GHA_Meta: "${{ env.SEMVER_VERSION }}"
-        env:
-          CCI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
+      # - name: 'Notify CircleCI to create builds for version "${{ env.SEMVER_VERSION }}" from commit ${{ github.sha }}'
+      #   id: release
+      #   uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0.5
+      #   with:
+      #     GHA_Meta: "${{ env.SEMVER_VERSION }}"
+      #   env:
+      #     CCI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
       - name: 'Call shared action for updating App.xcconfig file'
         uses: './.github/actions/update-app-config'
         with:
@@ -112,13 +112,13 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
-      - name: 'Notify CircleCI to make builds'
-        id: hotfix
-        uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0.5
-        with:
-          GHA_Meta: "${{ env.SEMVER_VERSION }}"
-        env:
-          CCI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
+      # - name: 'Notify CircleCI to make builds'
+      #   id: hotfix
+      #   uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0.5
+      #   with:
+      #     GHA_Meta: "${{ env.SEMVER_VERSION }}"
+      #   env:
+      #     CCI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
 
 
 
